@@ -14,18 +14,18 @@ import com.github.druyaned.active_recorder.data.*;
 import com.github.druyaned.active_recorder.time.DateTime;
 
 public class ControlPanel extends JPanel {
-    public static final int WIDTH = AppFrame.WIDTH;
-    public static final int HEIGHT = AppFrame.HEIGHT / 3;
-    public static final String STOPWATCH_DISPLAY_FORMAT = "%d:%02d:%02d";
+    public static final int W = AppFrame.W;
+    public static final int H = AppFrame.H / 3;
+    public static final String STOPWATCH_FORMAT = "%d:%02d:%02d";
     private static final Font DESCR_LABEL_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 11);
     private static final Font DESCR_FIELD_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
 
     private static final Paint gradient;
 
     static {
-        float x1 = 0, y1 = HEIGHT;
+        float x1 = 0, y1 = H;
         Color c1 = Color.WHITE;
-        float x2 = WIDTH, y2 = HEIGHT;
+        float x2 = W, y2 = H;
         Color c2 = new Color(240, 255, 255);
         gradient = new GradientPaint(x1, y1, c1, x2, y2, c2);
     }
@@ -52,7 +52,7 @@ public class ControlPanel extends JPanel {
      * @throws IOException in same cases as {@link StartFileReader#read}
      */
     public ControlPanel(Consumer<ActiveTime> taker, Data data) throws IOException {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(new Dimension(W, H));
         String fontName = Font.SANS_SERIF;
         int fontStyle = Font.PLAIN;
         int modeFontSize = 14;
@@ -66,8 +66,7 @@ public class ControlPanel extends JPanel {
         descrField = new JTextField("");
         final JButton begin = new JButton("BEGIN");
         final JButton end = new JButton("END");
-        final JLabel stopwatchDisplay =
-            new JLabel(String.format(STOPWATCH_DISPLAY_FORMAT, 0, 0, 0));
+        final JLabel stopwatchDisplay = new JLabel(String.format(STOPWATCH_FORMAT, 0, 0, 0));
 
         // adding all begin-end tasks
         StopwatchTasks stopwatchTasks = new StopwatchTasks(stopwatchDisplay);
@@ -92,7 +91,7 @@ public class ControlPanel extends JPanel {
         // stopwatch display
         stopwatchDisplay.setFont(new Font(fontName, fontStyle, stopwatchFontSize));
         begin.setEnabled(false);
-        if (data.startFile.wasEmptyAtInitialization()) {
+        if (data.startFile.EMPTY_AT_INITIALIZATION) {
             end.setEnabled(false);
         } else {
             StartData startData = StartFileReader.read(data.startFile);
@@ -171,10 +170,10 @@ public class ControlPanel extends JPanel {
         stopwatchButtonsPanel.add(end);
         
         // empty components for the correct positioning
-        int topFillerWidth = WIDTH / 8;
-        int topFillerHeight = HEIGHT / 8;
-        int sideFillerWidth = WIDTH / 8;
-        int sideFillerHeight = WIDTH - topFillerHeight;
+        int topFillerWidth = W / 8;
+        int topFillerHeight = H / 8;
+        int sideFillerWidth = W / 8;
+        int sideFillerHeight = W - topFillerHeight;
         EmptyComp topFiller = new EmptyComp(topFillerWidth, topFillerHeight);
         EmptyComp leftFiller = new EmptyComp(sideFillerWidth, sideFillerHeight);
         EmptyComp rightFiller = new EmptyComp(sideFillerWidth, sideFillerHeight);

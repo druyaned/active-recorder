@@ -9,21 +9,21 @@ import com.github.druyaned.active_recorder.active.*;
 import com.github.druyaned.active_recorder.data.*;
 
 public class AppFrame extends JFrame {
-    public static final int WIDTH = 500;
-    public static final int HEIGHT = 600;
+    public static final int W = 500;
+    public static final int H = 600;
     public static final int X = 100;
     public static final int Y = 100;
     public static final int DELAY = 8;
-
+    
     private final CalendarPanel calendarPanel;
     private ControlPanel controlPanel;
-
+    
     public AppFrame(final ActiveCalendar calendar, Data data) {
         super("ActiveRecorder");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setResizable(true);
         setLocation(X, Y);
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(new Dimension(W, H));
         Exiter exiter = new Exiter();
 
         // setting up the content pane

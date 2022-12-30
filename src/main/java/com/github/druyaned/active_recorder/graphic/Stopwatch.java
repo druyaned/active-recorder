@@ -1,16 +1,13 @@
 package com.github.druyaned.active_recorder.graphic;
 
 import static com.github.druyaned.active_recorder.time.DateTime.*;
-
 import java.awt.event.*;
-
 import javax.swing.*;
-
 import com.github.druyaned.active_recorder.active.*;
 import com.github.druyaned.active_recorder.time.DateTime;
 
 public class Stopwatch {
-    public static final int DELAY = 500;
+    public static final int DELAY = 512;
 
     private final Timer timer;
     private final StopwatchTasks stopwatchTasks;
@@ -31,7 +28,7 @@ public class Stopwatch {
             int m = dayAsMinutes % MINUTES_IN_HOUR;
             int s = dayAsSeconds % SECONDS_IN_MINUTE;
 
-            String text = String.format(ControlPanel.STOPWATCH_DISPLAY_FORMAT, h, m, s);
+            String text = String.format(ControlPanel.STOPWATCH_FORMAT, h, m, s);
             tasks.getTimerDisplay().setText(text);
         };
         this.timer = new Timer(DELAY, stopwatchBeginTask);
@@ -80,7 +77,7 @@ public class Stopwatch {
         DateTime t2 = DateTime.now();
         timer.stop();
         stopwatchTasks.runAllEndTasks();
-        String text = String.format(ControlPanel.STOPWATCH_DISPLAY_FORMAT, 0, 0, 0);
+        String text = String.format(ControlPanel.STOPWATCH_FORMAT, 0, 0, 0);
         stopwatchTasks.getTimerDisplay().setText(text);
         if (t1Copy.rawSeconds == t2.rawSeconds) {
             return null;
@@ -89,7 +86,5 @@ public class Stopwatch {
         }
     }
 
-    public boolean started() {
-        return t1 != null;
-    }
+    public boolean started() { return t1 != null; }
 }

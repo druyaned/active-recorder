@@ -11,40 +11,40 @@ import com.github.druyaned.active_recorder.active.*;
 import com.github.druyaned.active_recorder.time.*;
 
 public class CalendarPanel extends JPanel {
-    public static final int WIDTH = AppFrame.WIDTH;
-    public static final int HEIGHT = AppFrame.HEIGHT - ControlPanel.HEIGHT;
+    public static final int W = AppFrame.W;
+    public static final int H = AppFrame.H - ControlPanel.H;
     public static final int COLUMNS = DAYS_IN_WEEK;
     public static final int ROWS = MAX_DAY / COLUMNS + 2;
     public static final Color FILLER_COLOR = new Color(204, 204, 204);
-
+    
     public final String YEARS_PANEL_NAME = "Active Years";
     public final String MONTHS_PANEL_NAME = "Active Months";
     public final String DAYS_PANEL_NAME = "Active Days";
-
+    
     private static final Paint gradient;
-
+    
     static {
         float x1 = 0, y1 = 0;
         Color c1 = Color.WHITE;
-        float x2 = WIDTH, y2 = HEIGHT;
+        float x2 = W, y2 = H;
         Color c2 = new Color(240, 255, 255);
         gradient = new GradientPaint(x1, y1, c1, x2, y2, c2);
     }
-
+    
 //-Non-static---------------------------------------------------------------------------------------
-
+    
     private ActiveCalendar calendar;
     private final YearsPanel yearsPanel;
     private final MonthsPanel monthsPanel;
     private final DaysPanel daysPanel;
     private final JLabel dateDisplay;
-
+    
     private String currentCardPanelName;
     final CardLayout cardsLayout;
     final JPanel cardsPanel;
 
     public CalendarPanel(ActiveCalendar calendar) {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(new Dimension(W, H));
         this.calendar = calendar;
 
         cardsLayout = new CardLayout();
@@ -159,15 +159,13 @@ public class CalendarPanel extends JPanel {
         monthsPanel.updateBy(calendar);
         daysPanel.updateBy(calendar);
 
-        if (getCurrentCardPanelName().equals(DAYS_PANEL_NAME)) {
-            setDateDisplayForDaysPanel();
-        } else if (getCurrentCardPanelName().equals(MONTHS_PANEL_NAME)) {
-            setDateDisplayForMonthsPanel();
-        } else {
-            setDateDisplayForYearsPanel();
+        switch (getCurrentCardPanelName()) {
+            case DAYS_PANEL_NAME -> setDateDisplayForDaysPanel();
+            case MONTHS_PANEL_NAME -> setDateDisplayForMonthsPanel();
+            default -> setDateDisplayForYearsPanel();
         }
     }
-
+    
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;

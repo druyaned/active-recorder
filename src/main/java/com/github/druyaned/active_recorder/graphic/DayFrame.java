@@ -8,9 +8,9 @@ import com.github.druyaned.active_recorder.active.*;
 import com.github.druyaned.active_recorder.time.*;
 
 public class DayFrame extends JFrame {
-    public static final int WIDTH = 512;
-    public static final int HEIGHT = 448;
-    public static final int X = AppFrame.X + AppFrame.WIDTH;
+    public static final int W = 512;
+    public static final int H = 448;
+    public static final int X = AppFrame.X + AppFrame.W;
     public static final int Y = AppFrame.Y;
     private static final String TIME_FORMAT = "%02d:%02d:%02d";
 
@@ -24,7 +24,7 @@ public class DayFrame extends JFrame {
     public DayFrame(ActiveCalendar calendar) {
         setLocation(X, Y);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(new Dimension(W, H));
 
         // setting up the content pane
         contentPane = new JPanel(new BorderLayout());

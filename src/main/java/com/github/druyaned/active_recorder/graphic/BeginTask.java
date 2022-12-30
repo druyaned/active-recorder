@@ -15,15 +15,15 @@ import com.github.druyaned.active_recorder.time.DateTime;
 class BeginTask implements ActionListener {
     public static final int DELAY = 500;
 
-    private JButton begin;
-    private JButton end;
-    private JLabel display;
-    private Timer timer;
+    private final JButton begin;
+    private final JButton end;
+    private final JLabel display;
+    private final Timer timer;
     private DateTime t1 = null;
     private DateTime t2 = null;
-    private Supplier<ActiveMode> modeGetter;
-    private JTextArea descrArea;
-    private IntConsumer setModeChooser; // 1 = enabled, 0 = disabled
+    private final Supplier<ActiveMode> modeGetter;
+    private final JTextArea descrArea;
+    private final IntConsumer setModeChooser; // 1 = enabled, 0 = disabled
 
     public BeginTask(JButton begin, JButton end, JLabel display,
         Supplier<ActiveMode> modeGetter, JTextArea descrArea, IntConsumer setModeChooser)
@@ -42,7 +42,7 @@ class BeginTask implements ActionListener {
             int m = dayAsMinutes % MINUTES_IN_HOUR;
             int s = dayAsSeconds % SECONDS_IN_MINUTE;
 
-            String text = String.format(ControlPanel.STOPWATCH_DISPLAY_FORMAT, h, m, s);
+            String text = String.format(ControlPanel.STOPWATCH_FORMAT, h, m, s);
             display.setText(text);
         };
         timer = new Timer(DELAY, timerBeginTask);
@@ -73,7 +73,7 @@ class BeginTask implements ActionListener {
         end.setEnabled(false);
         timer.stop();
         setModeChooser.accept(1);
-        display.setText(String.format(ControlPanel.STOPWATCH_DISPLAY_FORMAT, 0, 0, 0));
+        display.setText(String.format(ControlPanel.STOPWATCH_FORMAT, 0, 0, 0));
         if (t1.rawSeconds == t2.rawSeconds) {
             return null;
         } else {

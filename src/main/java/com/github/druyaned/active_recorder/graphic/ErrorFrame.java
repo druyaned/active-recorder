@@ -6,8 +6,8 @@ import java.net.URL;
 import javax.swing.*;
 
 public class ErrorFrame extends JFrame {
-    public static final int WIDTH = 400;
-    public static final int HEIGHT = 200;
+    public static final int W = 400;
+    public static final int H = 200;
 
     private static int X;
     private static int Y;
@@ -16,14 +16,14 @@ public class ErrorFrame extends JFrame {
     static {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
-        X = screenSize.width / 2 - WIDTH / 2 - offset * 6;
-        Y = screenSize.height / 2 - HEIGHT / 2 - offset * 6;
+        X = screenSize.width / 2 - W / 2 - offset * 6;
+        Y = screenSize.height / 2 - H / 2 - offset * 6;
     }
 
     public ErrorFrame(String message) {
         super("Oops!");
         setLocation(X += offset, Y += offset);
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(new Dimension(W, H));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         if (message.length() > 96) {

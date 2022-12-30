@@ -4,7 +4,6 @@ import static com.github.druyaned.active_recorder.data.StartData.*;
 
 import java.io.*;
 import java.util.Properties;
-
 import com.github.druyaned.active_recorder.active.ActiveMode;
 
 public class StartFileReader {

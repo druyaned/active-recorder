@@ -9,7 +9,7 @@ public class DataDirFile {
     private final String name;
     private final Path path;
     private final File file;
-    protected final boolean EMPTY_AT_INITIALIZATION;
+    public final boolean EMPTY_AT_INITIALIZATION;
 
     /**
      * Gives a file regarding to the {@link DataDir data dir},
@@ -41,13 +41,11 @@ public class DataDirFile {
     }
 
 //-Getters------------------------------------------------------------------------------------------
-
-    public DataDir getDataDir() { return dataDir; }
-    public String getName() { return name; }
-    public Path asPath() { return path; }
-    public File asFile() { return file; }
-    public boolean wasEmptyAtInitialization() { return EMPTY_AT_INITIALIZATION; }
-
+    
+    String getName() { return name; }
+    Path asPath() { return path; }
+    File asFile() { return file; }
+    
 //-Methods------------------------------------------------------------------------------------------
 
     /**

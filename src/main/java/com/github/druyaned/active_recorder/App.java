@@ -41,7 +41,7 @@ public class App {
         final ActiveCalendar calendar;
         try {
             data = new Data();
-            if (data.dataFile.wasEmptyAtInitialization()) {
+            if (data.dataFile.EMPTY_AT_INITIALIZATION) {
                 calendar = new ActiveCalendar();
             } else {
                 calendar = DataFileReader.read(data.dataFile);
