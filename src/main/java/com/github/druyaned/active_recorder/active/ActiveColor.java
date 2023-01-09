@@ -2,9 +2,7 @@ package com.github.druyaned.active_recorder.active;
 
 import static com.github.druyaned.active_recorder.active.ActiveMode.*;
 
-/**
- * Provides a color of an activity to evaluate. The class is <i>immutable</i>.
-*/
+/** Provides a color of an activity to evaluate. The class is <i>immutable</i>. */
 public class ActiveColor implements Comparable<ActiveColor> {
     public static final int MIN_COLOR = 63;
     public static final int MAX_COLOR = 255;
@@ -23,7 +21,6 @@ public class ActiveColor implements Comparable<ActiveColor> {
         for (int i = 0, value = MIN_VALUE; i < AMOUNT; ++i, ++value) {
             colors[i] = new ActiveColor(value);
         }
-
         DEVELOPMENT_COLOR = colors[AMOUNT - 1]; // ind=384, greenest
         STAGNATION_COLOR = colors[AMOUNT / 2]; // ind=192, white
         RELAXATION_COLOR = colors[0]; // reddest
@@ -33,7 +30,6 @@ public class ActiveColor implements Comparable<ActiveColor> {
         if (value < MIN_VALUE || value > MAX_VALUE) {
             throw new IndexOutOfBoundsException("invalid value " + value);
         }
-
         return colors[value - MIN_VALUE];
     }
 
@@ -55,18 +51,17 @@ public class ActiveColor implements Comparable<ActiveColor> {
     public final int red, green, blue;
     
     /**
+     * The value of this color from {@link #MIN_VALUE min value} to {@link #MAX_VALUE max value}.
      * A greener color is bigger than a redder.
      * <i>Max green</i> corresponds {@link #MAX_VALUE} which is positive.
      * <i>Max red</i> corresponds {@link #MIN_VALUE} which is negative.
      * <i>White</i> corresponds {@code 0}.
-<pre>
-___|___R____G____B___|___________
-max|   63  255   63  |development
-mid|  255  255  255  |stagnation
-min|  255   63   63  |relaxation
-</pre>
-     * @return the value of this color from {@link #MIN_VALUE min value}
-     *         to {@link #MAX_VALUE max value}.
+     * <pre>
+     * ___|___R____G____B___|___________
+     * max|   63  255   63  |development
+     * mid|  255  255  255  |stagnation
+     * min|  255   63   63  |relaxation
+     * </pre>
      */
     public final int value;
 
@@ -104,9 +99,7 @@ min|  255   63   63  |relaxation
      *         and {@code negative} if the instance is redder.
      */
     @Override
-    public int compareTo(ActiveColor o) {
-        return value - o.value;
-    }
+    public int compareTo(ActiveColor o) { return value - o.value; }
 
     @Override
     public boolean equals(Object other) {
@@ -115,9 +108,7 @@ min|  255   63   63  |relaxation
     }
 
     @Override
-    public int hashCode() {
-        return value;
-    }
+    public int hashCode() { return value; }
 
     @Override
     public String toString() {

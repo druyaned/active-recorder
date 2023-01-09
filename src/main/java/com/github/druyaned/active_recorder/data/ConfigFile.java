@@ -20,7 +20,7 @@ final class ConfigFile extends DataDirFile {
         super(dataDir, NAME);
         
         if (EMPTY_AT_INITIALIZATION) { // so writing the config file
-            final String pathName = "/resources/data_files/config.dtd";
+            final String pathName = "/data_files/config.dtd";
             try (InputStream configIn = ConfigFile.class.getResourceAsStream(pathName)) {
                 Files.copy(configIn, super.asPath(), StandardCopyOption.REPLACE_EXISTING);
             }

@@ -6,7 +6,5 @@ public final class StartFile extends DataDirFile {
     public static final String NAME = "properties";
 
     /** {@inheritDoc} */
-    StartFile(DataDir dataDir) throws IOException {
-        super(dataDir, NAME);
-    }
+    StartFile(DataDir dataDir) throws IOException { super(dataDir, NAME); }
 }

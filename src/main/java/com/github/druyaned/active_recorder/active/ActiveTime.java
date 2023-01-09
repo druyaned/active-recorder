@@ -1,6 +1,6 @@
 package com.github.druyaned.active_recorder.active;
 
-import com.github.druyaned.active_recorder.time.DateTime;
+import java.time.ZoneId;
 
 /**
  * Provides an active time of {@link ActiveMode#DEVELOPMENT development},
@@ -9,92 +9,25 @@ import com.github.druyaned.active_recorder.time.DateTime;
  * <p>
  * The class is <i>immutable</i>.
  */
-public class ActiveTime {
-    public static final int MAX_DESCRIPTION_LENGTH = 48;
-
-    public static boolean meetsRequirements(DateTime start, DateTime stop) {
-        return start.compareTo(stop) < 0;
-    }
-
-//-Non-static---------------------------------------------------------------------------------------
-
-    protected final DateTime start;
-    protected final DateTime stop;
-    protected final ActiveMode mode;
-    protected final String descr;
-
-    /**
-     * Acreates an active time of {@link ActiveMode#DEVELOPMENT development},
-     * {@link ActiveMode#RELAXATION relaxation} or {@link ActiveMode#STAGNATION stagnation}
-     * that meets the <i>requirement</i>: {@code startTime < stopTime}.
-     * 
-     * @param start starting {@link DateTime date time} of the activity.
-     * @param stop stopping {@link DateTime date time} of the activity.
-     * @param mode {@link ActiveMode active mode} of the activity.
-     */
-    public ActiveTime(DateTime start, DateTime stop, ActiveMode mode) {
-        if (start.compareTo(stop) >= 0) {
-            throw new IllegalArgumentException("startTime >= stopTime: " + start + " >= " + stop);
-        }
-        this.start = start;
-        this.stop = stop;
-        this.mode = mode;
-        this.descr = "";
-    }
-
-    /**
-     * Acreates an active time of {@link ActiveMode#DEVELOPMENT development},
-     * {@link ActiveMode#RELAXATION relaxation} or {@link ActiveMode#STAGNATION stagnation}
-     * that meets the <i>requirement</i>: {@code startTime < stopTime}.
-     * 
-     * @param start starting {@link DateTime date time} of the activity.
-     * @param stop stopping {@link DateTime date time} of the activity.
-     * @param mode {@link ActiveMode active mode} of the activity.
-     * @param descr a short description of the activity
-     *        which must have a length less than {@link #MAX_DESCRIPTION_LENGTH maximum length}.
-     */
-    public ActiveTime(DateTime start, DateTime stop, ActiveMode mode, String descr) {
-        if (start.compareTo(stop) >= 0) {
-            throw new IllegalArgumentException("startTime >= stopTime: " + start + " >= " + stop);
-        }
-        int l = descr.length();
-        if (l > MAX_DESCRIPTION_LENGTH) {
-            descr = descr.substring(0, MAX_DESCRIPTION_LENGTH);
-        }
-        this.start = start;
-        this.stop = stop;
-        this.mode = mode;
-        this.descr = descr;
-    }
-
-    /**
-     * Gives a duration in {@code seconds} of the active time.
-     * 
-     * @return a duration in {@code seconds} of the active time.
-     */
-    public long getDuration() {
-        return stop.rawSeconds - start.rawSeconds;
-    }
-
-    public DateTime getStart() {
-        return start;
-    }
-
-    public DateTime getStop() {
-        return stop;
-    }
-
-    public ActiveMode getMode() {
-        return mode;
-    }
-
-    public String getDescription() {
-        return descr;
-    }
-
-    @Override
-    public String toString() {
-        return "[start=" + start + ", stop=" + stop + ", mode=" + mode +
-            ", description=" + descr + "]";
-    }
+public interface ActiveTime {
+    public static final int MIN_HOUR = 0;
+    public static final int MAX_HOUR = 23;
+    public static final int MIN_MINUTE = 0;
+    public static final int MAX_MINUTE = 59;
+    public static final int MIN_SECOND = 0;
+    public static final int MAX_SECOND = 59;
+    public static final int MIN_WEEK_DAY = 1;
+    public static final int MAX_WEEK_DAY = 7;
+    public static final int MIN_MONTH = 1;
+    public static final int MAX_MONTH = 12;
+    
+    public static final int MONTHS_IN_YEAR = 12;
+    public static final int HOURS_IN_DAY = 24;
+    public static final int MINUTES_IN_HOUR = 60;
+    public static final int SECONDS_IN_MINUTE = 60;
+    public static final int MILLIS_IN_SECOND = 1000;
+    public static final int SECONDS_IN_DAY = SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY;
+    
+    public static final int DAYS_IN_WEEK = 7;
+    public static final int MAX_DAY = 31;
 }

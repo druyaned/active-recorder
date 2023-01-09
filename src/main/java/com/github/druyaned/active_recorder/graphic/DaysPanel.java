@@ -1,14 +1,13 @@
 package com.github.druyaned.active_recorder.graphic;
 
-import static com.github.druyaned.active_recorder.time.Date.*;
-
+import static com.github.druyaned.active_recorder.active.ActiveTime.*;
+import com.github.druyaned.active_recorder.active.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import javax.swing.*;
-
-import com.github.druyaned.active_recorder.active.*;
-import com.github.druyaned.active_recorder.time.*;
 
 class DaysPanel extends JPanel {
     public static final int LOW_ROWS = MAX_DAY / DAYS_IN_WEEK + 1;
@@ -44,8 +43,9 @@ class DaysPanel extends JPanel {
 
         // dayNamesPanel
         Color dayNameLabelColor = new Color(128, 128, 128);
-        for (int d = WeekDay.MIN_VALUE; d <= WeekDay.MAX_VALUE; ++d) {
-            JLabel dayNameLabel = new JLabel(WeekDay.getShortName(d));
+        for (int d = MIN_WEEK_DAY; d <= MAX_WEEK_DAY; ++d) {
+            String shortDayName = DayOfWeek.of(d).toString().substring(0, 3);
+            JLabel dayNameLabel = new JLabel(shortDayName);
             dayNameLabel.setHorizontalAlignment(JLabel.CENTER);
             dayNameLabel.setForeground(dayNameLabelColor);
             dayNamesPanel.add(dayNameLabel);
@@ -134,10 +134,10 @@ class DaysPanel extends JPanel {
             JButton prevDayButton = dayButtons[r][c];
 
             long totalActiveTime = 0;
-            for (int j = 0; j < prevActiveDay.getActivitiesSize(); ++j) {
-                totalActiveTime += prevActiveDay.getActivity(j).getDuration();
+            for (int j = 0; j < prevActiveDay.getZonedActivitiesSize(); ++j) {
+                totalActiveTime += prevActiveDay.getZonedActivity(j).duration().getSeconds();
             }
-            int activePart = (int) (100D * totalActiveTime / DateTime.SECONDS_IN_DAY);
+            int activePart = (int) (100D * totalActiveTime / SECONDS_IN_DAY);
 
             String text = "<html><body><p style=\"text-align:center\">" + prevActiveDay.number +
                 "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">&nbsp;" +
@@ -156,10 +156,10 @@ class DaysPanel extends JPanel {
             JButton dayButton = dayButtons[r][c];
 
             long totalActiveTime = 0;
-            for (int j = 0; j < activeDay.getActivitiesSize(); ++j) {
-                totalActiveTime += activeDay.getActivity(j).getDuration();
+            for (int j = 0; j < activeDay.getZonedActivitiesSize(); ++j) {
+                totalActiveTime += activeDay.getZonedActivity(j).duration().getSeconds();
             }
-            int activePart = (int) (100D * totalActiveTime / DateTime.SECONDS_IN_DAY);
+            int activePart = (int) (100D * totalActiveTime / SECONDS_IN_DAY);
 
             String text = "<html><body><p style=\"text-align:center\">" + activeDay.number +
                 "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">&nbsp;" +
@@ -191,12 +191,14 @@ class DaysPanel extends JPanel {
         int year = currentActiveYear.number;
         int month = currentActiveMonth.number;
         int prevMonth = month - 1;
-        monthOffset = WeekDay.getFirstWeekDayIn(year, month) - 1;
+        
+        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
+        monthOffset = firstDayOfMonth.getDayOfWeek().getValue() - 1;
         int indexOfLastDay = (dayAmount - 1 + monthOffset);
         int rows = (indexOfLastDay >= LOW_ROWS * COLUMNS) ? HIGH_ROWS : LOW_ROWS;
         int prevDayAmount = (prevMonth == 0) ?
-            Month.getDayAmount(year, MAX_MONTH) : // must be (year - 1) but not needed
-            Month.getDayAmount(year, prevMonth);
+                            YearMonth.of(year, MAX_MONTH).lengthOfMonth() :
+                            YearMonth.of(year, prevMonth).lengthOfMonth();
 
         // set layout
         // buttonsPanel.setLayout(new GridLayout(rows, COLUMNS));
@@ -215,10 +217,11 @@ class DaysPanel extends JPanel {
                     ActiveDay activeDay = currentActiveMonth.getActiveDay(dayNumber);
                     if (activeDay != null) {
                         long totalActiveTime = 0;
-                        for (int i = 0; i < activeDay.getActivitiesSize(); ++i) {
-                            totalActiveTime += activeDay.getActivity(i).getDuration();
+                        for (int i = 0; i < activeDay.getZonedActivitiesSize(); ++i) {
+                            totalActiveTime += activeDay.getZonedActivity(i)
+                                    .duration().getSeconds();
                         }
-                        int activePart = (int) (100D * totalActiveTime / DateTime.SECONDS_IN_DAY);
+                        int activePart = (int) (100D * totalActiveTime / SECONDS_IN_DAY);
 
                         String text = "<html><body><p style=\"text-align:center\">" + dayNumber +
                             "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">&nbsp;" +

@@ -12,8 +12,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import com.github.druyaned.active_recorder.active.ActiveCalendar;
 import com.github.druyaned.active_recorder.active.ActiveMode;
-import com.github.druyaned.active_recorder.active.ActiveTime;
-import com.github.druyaned.active_recorder.time.DateTime;
+import com.github.druyaned.active_recorder.active.Activity;
+import java.time.Instant;
 
 public class DataFileReader {
 
@@ -26,7 +26,7 @@ public class DataFileReader {
      * @throws SAXException in same cases as {@link DocumentBuilder#parse}.
      * @throws IOException in same cases as {@link DocumentBuilder#parse}.
      */
-    public static ActiveCalendar read(DataFile aFile) throws SAXException, IOException {
+    public static Activity[] read(DataFile aFile) throws SAXException, IOException {
 
         // prepare to read
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -47,49 +47,23 @@ public class DataFileReader {
         Element root = document.getDocumentElement();
         NodeList activeTimesList = root.getChildNodes();
         int n = activeTimesList.getLength();
-
+        
         // read the document
-        ActiveTime[] activeTimes = new ActiveTime[n];
+        Activity[] activities = new Activity[n];
         for (int i = 0; i < n; ++i) {
-
-            // declare
             Node activeTimeNode = activeTimesList.item(i);
             NodeList fields = activeTimeNode.getChildNodes();
             Node startNode = fields.item(0);
             Node stopNode = fields.item(1);
             Node modeNode = fields.item(2);
             Node descrNode = fields.item(3);
-
-            // start field
-            NodeList startList = startNode.getChildNodes();
-            int year1 = Integer.parseInt(startList.item(0).getTextContent());
-            int month1 = Integer.parseInt(startList.item(1).getTextContent());
-            int day1 = Integer.parseInt(startList.item(2).getTextContent());
-            int h1 = Integer.parseInt(startList.item(3).getTextContent());
-            int m1 = Integer.parseInt(startList.item(4).getTextContent());
-            int s1 = Integer.parseInt(startList.item(5).getTextContent());
-            DateTime start = DateTime.of(year1, month1, day1, h1, m1, s1);
-
-            // stop field
-            NodeList stopList = stopNode.getChildNodes();
-            int year2 = Integer.parseInt(stopList.item(0).getTextContent());
-            int month2 = Integer.parseInt(stopList.item(1).getTextContent());
-            int day2 = Integer.parseInt(stopList.item(2).getTextContent());
-            int h2 = Integer.parseInt(stopList.item(3).getTextContent());
-            int m2 = Integer.parseInt(stopList.item(4).getTextContent());
-            int s2 = Integer.parseInt(stopList.item(5).getTextContent());
-            DateTime stop = DateTime.of(year2, month2, day2, h2, m2, s2);
-
-            // mode field
+            Instant start = Instant.parse(startNode.getTextContent());
+            Instant stop = Instant.parse(stopNode.getTextContent());
             ActiveMode mode = ActiveMode.valueOf(modeNode.getTextContent());
-
-            // description field
             String descr = descrNode.getTextContent();
-
-            // activeTime item
-            activeTimes[i] = new ActiveTime(start, stop, mode, descr);
+            activities[i] = new Activity(start, stop, mode, descr);
         }
 
-        return new ActiveCalendar(activeTimes);
+        return activities;
     }
 }

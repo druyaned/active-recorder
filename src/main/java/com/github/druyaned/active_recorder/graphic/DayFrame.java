@@ -1,11 +1,10 @@
 package com.github.druyaned.active_recorder.graphic;
 
-import java.awt.*;
-
-import javax.swing.*;
-
 import com.github.druyaned.active_recorder.active.*;
-import com.github.druyaned.active_recorder.time.*;
+import java.awt.*;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import javax.swing.*;
 
 public class DayFrame extends JFrame {
     public static final int W = 512;
@@ -16,7 +15,7 @@ public class DayFrame extends JFrame {
 
     private final JPanel contentPane;
     private JTable activitiesTable;
-    private Date currentDate;
+    private LocalDate currentDate;
     private int currentActivitiesSize;
     private ActiveTableModel tableModel;
     private JScrollPane scrollPane;
@@ -37,38 +36,36 @@ public class DayFrame extends JFrame {
             }
         });
 
-        Date lastDate = calendar.getLastActivity().getStart().getDate();
-        ActiveDay lastActiveDay = calendar.getActiveYear(lastDate.year)
-            .getActiveMonth(lastDate.month).getActiveDay(lastDate.day);
+        LocalDate lastDate = calendar.getLastZonedActivity().getZonedStart().toLocalDate();
+        ActiveDay lastActiveDay = calendar.getActiveYear(lastDate.getYear())
+                .getActiveMonth(lastDate.getMonthValue()).getActiveDay(lastDate.getDayOfMonth());
         currentDate = lastDate;
-        currentActivitiesSize = lastActiveDay.getActivitiesSize();
+        currentActivitiesSize = lastActiveDay.getZonedActivitiesSize();
         remakeBy(lastActiveDay);
     }
 
     // adds scroll pane, so it must not exist before the invoke
     private void remakeBy(ActiveDay activeDay) {
-        String[] columnNames = { "Start", "Stop", "Mode", "ID", "Description" };
+        String[] columnNames = { "Start", "Stop", "Mode", "Description" };
         int numberOfStates = columnNames.length;
         Object[][] data = new Object[currentActivitiesSize][numberOfStates];
-
         for (int r = 0; r < currentActivitiesSize; ++r) {
             for (int c = 0; c < numberOfStates; ++c) {
-                Activity a = activeDay.getActivity(r);
-
-                int h1 = a.getStart().hour, m1 = a.getStart().minute, s1 = a.getStart().second;
-                int h2 = a.getStop().hour, m2 = a.getStop().minute, s2 = a.getStop().second;
+                ZonedActivity a = activeDay.getZonedActivity(r);
+                ZonedDateTime z1 = a.getZonedStart();
+                ZonedDateTime z2 = a.getZonedStop();
+                int h1 = z1.getHour(), m1 = z1.getMinute(), s1 = z1.getSecond();
+                int h2 = z2.getHour(), m2 = z2.getMinute(), s2 = z2.getSecond();
                 if (h2 == 0 && s2 == 0) {
                     h2 = 24;
                 }
                 String startStr = String.format(TIME_FORMAT, h1, m1, s1);
                 String stopStr = String.format(TIME_FORMAT, h2, m2, s2);
                 String modeStr = a.getMode().toString();
-                String idStr = Integer.toString(a.getId());
-                String descr = a.getDescription();
-                data[r] = new Object[] { startStr, stopStr, modeStr, idStr, descr };
+                String descr = a.getDescr();
+                data[r] = new Object[] { startStr, stopStr, modeStr, descr };
             }
         }
-
         tableModel = new ActiveTableModel(data, columnNames, activeDay);
         activitiesTable = new JTable(tableModel);
         activitiesTable.setEnabled(false);
@@ -78,52 +75,49 @@ public class DayFrame extends JFrame {
         }
         ActiveColumnAdjuster.adjust(activitiesTable);
         scrollPane = new JScrollPane(activitiesTable);
-
         setTitle(currentDate.toString());
         contentPane.add(scrollPane, BorderLayout.CENTER);
         pack();
     }
 
     void updateBy(ActiveCalendar calendar) {
-        Activity activity = calendar.getLastActivity();
-        Date lastDate = activity.getStart().getDate();
-        ActiveDay lastActiveDay = calendar.getActiveYear(lastDate.year)
-            .getActiveMonth(lastDate.month).getActiveDay(lastDate.day);
+        ZonedActivity zonedActivity = calendar.getLastZonedActivity();
+        LocalDate lastDate = zonedActivity.getZonedStart().toLocalDate();
+        ActiveDay lastActiveDay = calendar.getActiveYear(lastDate.getYear())
+                .getActiveMonth(lastDate.getMonthValue()).getActiveDay(lastDate.getDayOfMonth());
         if (!currentDate.equals(lastDate)) {
             currentDate = lastDate;
-            currentActivitiesSize = lastActiveDay.getActivitiesSize();
-
+            currentActivitiesSize = lastActiveDay.getZonedActivitiesSize();
             remove(scrollPane);
             remakeBy(lastActiveDay);
             return;
         }
-
-        for (int i = currentActivitiesSize; i < lastActiveDay.getActivitiesSize(); ++i) {
-            Activity a = calendar.getActiveYear(currentDate.year)
-                .getActiveMonth(currentDate.month).getActiveDay(currentDate.day).getActivity(i);
-
-            int h1 = a.getStart().hour, m1 = a.getStart().minute, s1 = a.getStart().second;
-            int h2 = a.getStop().hour, m2 = a.getStop().minute, s2 = a.getStop().second;
+        for (int i = currentActivitiesSize; i < lastActiveDay.getZonedActivitiesSize(); ++i) {
+            ZonedActivity a = calendar.getActiveYear(currentDate.getYear())
+                    .getActiveMonth(currentDate.getMonthValue())
+                    .getActiveDay(currentDate.getDayOfMonth()).getZonedActivity(i);
+            ZonedDateTime z1 = a.getZonedStart();
+            ZonedDateTime z2 = a.getZonedStop();
+            int h1 = z1.getHour(), m1 = z1.getMinute(), s1 = z1.getSecond();
+            int h2 = z2.getHour(), m2 = z2.getMinute(), s2 = z2.getSecond();
             if (h2 == 0 && s2 == 0) {
                 h2 = 24;
             }
             String startStr = String.format(TIME_FORMAT, h1, m1, s1);
             String stopStr = String.format(TIME_FORMAT, h2, m2, s2);
             String modeStr = a.getMode().toString();
-            String idStr = Integer.toString(a.getId());
-            String descr = a.getDescription();
-            Object[] rowData = new Object[] { startStr, stopStr, modeStr, idStr, descr };
+            String descr = a.getDescr();
+            Object[] rowData = new Object[] { startStr, stopStr, modeStr, descr };
             tableModel.addRow(rowData);
             tableModel.setRowColor(tableModel.getRowCount() - 1, a.getMode());
         }
         ActiveColumnAdjuster.adjust(activitiesTable);
-        currentActivitiesSize = lastActiveDay.getActivitiesSize();
+        currentActivitiesSize = lastActiveDay.getZonedActivitiesSize();
     }
 
     void setActiveDay(ActiveDay activeDay) {
-        currentDate = activeDay.getFirstActivity().getStart().getDate();
-        currentActivitiesSize = activeDay.getActivitiesSize();
-
+        currentDate = activeDay.getFirstZonedActivity().getZonedStart().toLocalDate();
+        currentActivitiesSize = activeDay.getZonedActivitiesSize();
         remove(scrollPane);
         remakeBy(activeDay);
     }

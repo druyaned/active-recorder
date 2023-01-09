@@ -8,9 +8,12 @@ import javax.swing.*;
 import org.xml.sax.SAXException;
 
 import com.github.druyaned.active_recorder.active.ActiveCalendar;
+import com.github.druyaned.active_recorder.active.ActiveMode;
+import com.github.druyaned.active_recorder.active.Activity;
 import com.github.druyaned.active_recorder.data.*;
 import com.github.druyaned.active_recorder.graphic.AppFrame;
 import com.github.druyaned.active_recorder.graphic.ErrorFrame;
+import java.time.Instant;
 
 /**
  * This program is an attempt to solve a problem of a low life activity.
@@ -42,9 +45,14 @@ public class App {
         try {
             data = new Data();
             if (data.dataFile.EMPTY_AT_INITIALIZATION) {
-                calendar = new ActiveCalendar();
+                Instant stop = Instant.now();
+                Instant start = stop.minusSeconds(1);
+                ActiveMode mode = ActiveMode.STAGNATION;
+                String descr = "Opening ActiveRecorder";
+                Activity a = new Activity(start, stop, mode, descr);
+                calendar = new ActiveCalendar(new Activity[] { a });
             } else {
-                calendar = DataFileReader.read(data.dataFile);
+                calendar = new ActiveCalendar(DataFileReader.read(data.dataFile));
             }
         } catch (IOException | SAXException e) {
             final String m = "Can't read the data file but there was an effort.";

@@ -27,7 +27,7 @@ public class StartFileWriter {
         Properties properties = new Properties();
         String message = "ActiveRecorder";
         properties.put(STOPWATCH_STARTED_KEY, Boolean.toString(true));
-        properties.put(START_RAWSECONDS_KEY, Long.toString(aData.startRawSeconds));
+        properties.put(START_TIME_KEY, aData.time.toString());
         properties.put(START_MODE_KEY, aData.mode.toString());
         properties.put(START_DESCRIPTION_KEY, aData.descr);
 

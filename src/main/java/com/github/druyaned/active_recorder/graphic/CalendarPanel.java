@@ -1,14 +1,11 @@
 package com.github.druyaned.active_recorder.graphic;
 
-import static com.github.druyaned.active_recorder.time.Date.*;
-
+import static com.github.druyaned.active_recorder.active.ActiveTime.*;
 import java.awt.*;
-
 import javax.swing.*;
 import javax.swing.border.*;
-
 import com.github.druyaned.active_recorder.active.*;
-import com.github.druyaned.active_recorder.time.*;
+import java.time.Month;
 
 public class CalendarPanel extends JPanel {
     public static final int W = AppFrame.W;
@@ -33,7 +30,7 @@ public class CalendarPanel extends JPanel {
     
 //-Non-static---------------------------------------------------------------------------------------
     
-    private ActiveCalendar calendar;
+    private final ActiveCalendar calendar;
     private final YearsPanel yearsPanel;
     private final MonthsPanel monthsPanel;
     private final DaysPanel daysPanel;
@@ -113,27 +110,19 @@ public class CalendarPanel extends JPanel {
         add(cardsPanel, BorderLayout.CENTER);
     }
 
-    public void setDayFrameInvisible() {
-        daysPanel.setDayFrameInvisible();
-    }
+    public void setDayFrameInvisible() { daysPanel.setDayFrameInvisible(); }
 
-    public void dayFrameDispose() {
-        daysPanel.dayFrameDispose();
-    }
+    public void dayFrameDispose() { daysPanel.dayFrameDispose(); }
 
 //-Private-methods----------------------------------------------------------------------------------
 
-    private String getCurrentCardPanelName() {
-        return currentCardPanelName;
-    }
+    private String getCurrentCardPanelName() { return currentCardPanelName; }
 
     private void setCurrentCardPanelName(String cardPanelName) {
         currentCardPanelName = cardPanelName;
     }
 
-    private void setDateDisplayForYearsPanel() {
-        dateDisplay.setText("Active years");
-    }
+    private void setDateDisplayForYearsPanel() { dateDisplay.setText("Active years"); }
 
     private void setDateDisplayForMonthsPanel() {
         dateDisplay.setText(Integer.toString(monthsPanel.getCurrentYear()));
@@ -141,24 +130,18 @@ public class CalendarPanel extends JPanel {
 
     private void setDateDisplayForDaysPanel() {
         int monthNumber = daysPanel.getCurrentMonth();
-        String monthName = Month.getName(monthNumber);
+        String monthName = Month.of(monthNumber).toString();
         String f = "%d/%d (%s)";
         dateDisplay.setText(String.format(f, daysPanel.getCurrentYear(), monthNumber, monthName));
     }
 
 //-Methods------------------------------------------------------------------------------------------
 
-    public void take(ActiveTime activeTime) {
-        if (!calendar.add(activeTime)) {
-            String m = "Invalid time: can't add a new activity.";
-            String t = "Inability to add";
-            JOptionPane.showMessageDialog(getParent(), m, t, JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
+    public void take(Activity a) {
+        calendar.add(a);
         yearsPanel.updateBy(calendar);
         monthsPanel.updateBy(calendar);
         daysPanel.updateBy(calendar);
-
         switch (getCurrentCardPanelName()) {
             case DAYS_PANEL_NAME -> setDateDisplayForDaysPanel();
             case MONTHS_PANEL_NAME -> setDateDisplayForMonthsPanel();

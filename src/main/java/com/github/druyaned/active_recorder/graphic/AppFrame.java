@@ -1,12 +1,14 @@
 package com.github.druyaned.active_recorder.graphic;
 
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-
 import com.github.druyaned.active_recorder.active.*;
 import com.github.druyaned.active_recorder.data.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.time.Instant;
+import javax.swing.*;
+import javax.xml.transform.TransformerException;
 
 public class AppFrame extends JFrame {
     public static final int W = 500;
@@ -35,7 +37,7 @@ public class AppFrame extends JFrame {
         calendarPanel = new CalendarPanel(calendar);
         try {
             controlPanel = new ControlPanel(calendarPanel::take, data);
-        } catch (Exception e) {
+        } catch (IOException e) {
             final String m = "Can't read the start file but there was an effort.";
             invokeErrorFrameAndUnsetExit(m, e, exiter);
         }
@@ -47,7 +49,7 @@ public class AppFrame extends JFrame {
         exiter.add(() -> {
             try {
                 DataFileWriter.write(calendar, data.dataFile, data.configFile);
-            } catch (Exception e) {
+            } catch (FileNotFoundException | TransformerException e) {
                 final String m = "Can't write the data file but there was an effort.";
                 invokeErrorFrameAndUnsetExit(m, e, exiter);
             }
@@ -56,16 +58,15 @@ public class AppFrame extends JFrame {
         exiter.add(() -> {
             try {
                 if (finalControlPanel.isStopwatchStarted()) {
-                    long startRawSeconds = finalControlPanel.getStartTime().rawSeconds;
+                    Instant startTime = finalControlPanel.getStartTime();
                     ActiveMode mode = finalControlPanel.getMode();
                     String descr = finalControlPanel.getDescription();
-                    StartData startData = new StartData(startRawSeconds, mode, descr);
-
+                    StartData startData = new StartData(startTime, mode, descr);
                     StartFileWriter.writeIfStarted(data.startFile, startData);
                 } else {
                     StartFileWriter.writeIfNotStarted(data.startFile);
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 final String m = "Can't write the start file but there was an effort.";
                 invokeErrorFrameAndUnsetExit(m, e, exiter);
             }

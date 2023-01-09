@@ -1,17 +1,14 @@
 package com.github.druyaned.active_recorder.graphic;
 
-import static com.github.druyaned.active_recorder.active.Activity.MAX_DESCRIPTION_LENGTH;
-
+import static com.github.druyaned.active_recorder.active.Activity.MAX_DESCR_LENGTH;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.function.Consumer;
-
 import javax.swing.*;
-
 import com.github.druyaned.active_recorder.active.*;
 import com.github.druyaned.active_recorder.data.*;
-import com.github.druyaned.active_recorder.time.DateTime;
+import java.time.Instant;
 
 public class ControlPanel extends JPanel {
     public static final int W = AppFrame.W;
@@ -47,11 +44,11 @@ public class ControlPanel extends JPanel {
      *  </ol><p>
      * Provides the {@code taker} with necessary info.
      * 
-     * @param taker takes info from the conrol pane.
+     * @param taker takes info from the control pane.
      * @param data the {@link Data app data} to read-write.
      * @throws IOException in same cases as {@link StartFileReader#read}
      */
-    public ControlPanel(Consumer<ActiveTime> taker, Data data) throws IOException {
+    public ControlPanel(Consumer<Activity> taker, Data data) throws IOException {
         setPreferredSize(new Dimension(W, H));
         String fontName = Font.SANS_SERIF;
         int fontStyle = Font.PLAIN;
@@ -84,10 +81,21 @@ public class ControlPanel extends JPanel {
         end.setFont(new Font(fontName, Font.BOLD, stopwatchButtonFontSize));
         begin.addActionListener((e) -> stopwatch.start());
         end.addActionListener((e) -> {
-            ActiveTime activeTime = stopwatch.stop(getMode(), descrField.getText());
-            taker.accept(activeTime);
+            final String m = "Can't add a new activity.";
+            final String t = "Inability to add";
+            final int messageType = JOptionPane.INFORMATION_MESSAGE;
+            try {
+                Activity a = stopwatch.stop(getMode(), descrField.getText());
+                if (a != null) {
+                    taker.accept(a);
+                } else {
+                    JOptionPane.showMessageDialog(getParent(), m, t, messageType);
+                }
+            } catch (IllegalArgumentException exc) {
+                JOptionPane.showMessageDialog(getParent(), m, t, messageType);
+            }
         });
-
+        
         // stopwatch display
         stopwatchDisplay.setFont(new Font(fontName, fontStyle, stopwatchFontSize));
         begin.setEnabled(false);
@@ -105,7 +113,7 @@ public class ControlPanel extends JPanel {
                     relaxation.setSelected(true);
                 }
                 descrField.setText(startData.descr);
-                stopwatch.startFrom(DateTime.of(startData.startRawSeconds));
+                stopwatch.startFrom(startData.time);
                 end.setEnabled(true);
             } else {
                 end.setEnabled(false);
@@ -119,11 +127,11 @@ public class ControlPanel extends JPanel {
             @Override
             public void keyTyped(KeyEvent e) {
                 String text = descrField.getText();
-                if (text.length() >= MAX_DESCRIPTION_LENGTH + 1) {
+                if (text.length() >= MAX_DESCR_LENGTH + 1) {
                     e.consume();
-                    String shorter = text.substring(0, MAX_DESCRIPTION_LENGTH);
+                    String shorter = text.substring(0, MAX_DESCR_LENGTH);
                     descrField.setText(shorter);
-                } else if (text.length() >= MAX_DESCRIPTION_LENGTH)  {
+                } else if (text.length() >= MAX_DESCR_LENGTH)  {
                     e.consume();
                 }
             }
@@ -199,8 +207,11 @@ public class ControlPanel extends JPanel {
 //-Getters------------------------------------------------------------------------------------------
 
     public ActiveMode getMode() { return mode; }
+    
     public String getDescription() { return descrField.getText(); }
-    public DateTime getStartTime() { return stopwatch.getStartDateTime(); }
+    
+    public Instant getStartTime() { return stopwatch.getStartDateTime(); }
+    
     public boolean isStopwatchStarted() { return stopwatch.started(); }
 
 //-Methods------------------------------------------------------------------------------------------

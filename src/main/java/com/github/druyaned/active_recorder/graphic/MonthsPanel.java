@@ -1,16 +1,14 @@
 package com.github.druyaned.active_recorder.graphic;
 
+import static com.github.druyaned.active_recorder.active.ActiveTime.*;
 import static com.github.druyaned.active_recorder.graphic.DaysPanel.SUBTEXT_COLOR;
 import static com.github.druyaned.active_recorder.graphic.DaysPanel.TEXT_FONT;
-import static com.github.druyaned.active_recorder.time.Date.*;
-
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
-
 import com.github.druyaned.active_recorder.active.*;
-import com.github.druyaned.active_recorder.time.*;
+import java.time.Month;
+
 
 class MonthsPanel extends JPanel {
     public static final int COLUMNS = 3;
@@ -35,11 +33,11 @@ class MonthsPanel extends JPanel {
         int monthNumber = 1;
         for (int r = 0; r < ROWS; ++r) {
             for (int c = 0; c < COLUMNS; ++c, ++monthNumber) {
-                String monthName = Month.getName(monthNumber);
+                String monthName = Month.of(monthNumber).toString();
                 JButton monthButton = monthButtons[r][c] = new JButton(monthName);
                 monthButton.setFont(TEXT_FONT);
                 monthButton.addActionListener(new MonthButtonListener(currentActiveYear,
-                    currentActiveYear.getActiveMonth(monthNumber), tasks));
+                        currentActiveYear.getActiveMonth(monthNumber), tasks));
                 add(monthButton);
             }
         }
@@ -72,12 +70,12 @@ class MonthsPanel extends JPanel {
             JButton prevMonthButton = monthButtons[r][c];
 
             String text = "<html><body><p style=\"text-align:center\">" +
-                Month.getName(prevActiveMonth.number) +
-                "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
-                prevActiveMonth.getActiveDaysSize() + "/" + prevActiveMonth.dayAmount +
-                "</font></p></body></html>";
+                          Month.of(prevActiveMonth.number).toString() +
+                          "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
+                          prevActiveMonth.getActiveDaysSize() + "/" +
+                          prevActiveMonth.dayAmount +
+                          "</font></p></body></html>";
             prevMonthButton.setText(text);
-
             prevMonthButton.setBackground(AWTColors.getBy(prevActiveMonth.getColor()));
         }
 
@@ -90,10 +88,10 @@ class MonthsPanel extends JPanel {
             JButton monthButton = monthButtons[r][c];
 
             String text = "<html><body><p style=\"text-align:center\">" +
-                Month.getName(activeMonth.number) +
-                "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
-                activeMonth.getActiveDaysSize() + "/" + activeMonth.dayAmount +
-                "</font></p></body></html>";
+                          Month.of(activeMonth.number).toString() +
+                          "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
+                          activeMonth.getActiveDaysSize() + "/" + activeMonth.dayAmount +
+                          "</font></p></body></html>";
             monthButton.setText(text);
 
             monthButton.setEnabled(true);
@@ -102,7 +100,7 @@ class MonthsPanel extends JPanel {
             ActionListener[] listeners = monthButton.getActionListeners();
             monthButton.removeActionListener(listeners[0]);
             monthButton.addActionListener(new MonthButtonListener(prevActiveYear,
-                activeMonth, tasks));
+                    activeMonth, tasks));
         }
     }
 
@@ -129,10 +127,10 @@ class MonthsPanel extends JPanel {
 
                 if (activeMonth != null) {
                     String text = "<html><body><p style=\"text-align:center\">" +
-                        Month.getName(monthNumber) +
-                        "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
-                        activeMonth.getActiveDaysSize() + "/" + activeMonth.dayAmount +
-                        "</font></p></body></html>";
+                                  Month.of(monthNumber).toString() +
+                                  "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
+                                  activeMonth.getActiveDaysSize() + "/" + activeMonth.dayAmount +
+                                  "</font></p></body></html>";
                     monthButton.setText(text);
                     monthButton.setEnabled(true);
                     monthButton.setBackground(AWTColors.getBy(activeMonth.getColor()));
@@ -140,7 +138,7 @@ class MonthsPanel extends JPanel {
                     ActionListener[] listeners = monthButton.getActionListeners();
                     monthButton.removeActionListener(listeners[0]);
                     monthButton.addActionListener(new MonthButtonListener(currentActiveYear,
-                        activeMonth, tasks));
+                            activeMonth, tasks));
                 } else {
                     monthButton.setEnabled(false);
                 }

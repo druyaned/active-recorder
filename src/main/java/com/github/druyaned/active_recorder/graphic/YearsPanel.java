@@ -1,14 +1,11 @@
 package com.github.druyaned.active_recorder.graphic;
 
+import static com.github.druyaned.active_recorder.active.ActiveTime.*;
 import static com.github.druyaned.active_recorder.graphic.DaysPanel.SUBTEXT_COLOR;
-
 import java.awt.*;
 import java.util.ArrayList;
-
 import javax.swing.*;
-
 import com.github.druyaned.active_recorder.active.*;
-import com.github.druyaned.active_recorder.time.Date;
 
 class YearsPanel extends JPanel {
     public static final Font TEXT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 32);
@@ -19,10 +16,7 @@ class YearsPanel extends JPanel {
     private int currentActiveYearsSize;
 
     YearsPanel(ActiveCalendar calendar, YearButtonTasks tasks) {
-
-        // initialize current state
-        currentActiveYearsSize = calendar.getActiveYearsSize();
-
+        currentActiveYearsSize = calendar.getActiveYearsSize(); // initializing current state
         // make buttons
         yearButtonsPane = new JPanel(new GridLayout(currentActiveYearsSize, 1));
         yearButtonsPane.setOpaque(false);
@@ -35,7 +29,7 @@ class YearsPanel extends JPanel {
             yearButton.setFont(TEXT_FONT);
             String text = "<html><body><p style=\"text-align:center\">" + activeYear.number +
                 "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
-                activeYear.getActiveMonthsSize() + "/" + Date.MONTHS_IN_YEAR +
+                activeYear.getActiveMonthsSize() + "/" + MONTHS_IN_YEAR +
                 "</font></p></body></html>";
             yearButton.setText(text);
 
@@ -55,27 +49,20 @@ class YearsPanel extends JPanel {
     }
 
     public void updateBy(ActiveCalendar calendar) {
-        // declaration
-        int prevActiveYearsSize = currentActiveYearsSize;
-
-        // update the current state
-        currentActiveYearsSize = calendar.getActiveYearsSize();
-
-        // update color of the previous year button
-        {
+        int prevActiveYearsSize = currentActiveYearsSize; // declaration
+        currentActiveYearsSize = calendar.getActiveYearsSize(); // update current state
+        { // update color of the previous year button
             int i = prevActiveYearsSize - 1;
             ActiveYear prevActiveYear = calendar.getActiveYearBy(i);
             JButton prevYearButton = yearButtons.get(i);
-
             String text = "<html><body><p style=\"text-align:center\">" + prevActiveYear.number +
-                "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
-                prevActiveYear.getActiveMonthsSize() + "/" + Date.MONTHS_IN_YEAR +
-                "</font></p></body></html>";
+                          "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
+                          prevActiveYear.getActiveMonthsSize() + "/" + MONTHS_IN_YEAR +
+                          "</font></p></body></html>";
             prevYearButton.setText(text);
-
             prevYearButton.setBackground(AWTColors.getBy(prevActiveYear.getColor()));
         }
-
+        
         if (prevActiveYearsSize == currentActiveYearsSize) {
             return;
         } // else if prevActiveYearsSize != currentActiveYearsSize
@@ -83,17 +70,15 @@ class YearsPanel extends JPanel {
         // add new year buttons
         GridLayout gridLayout = (GridLayout)yearButtonsPane.getLayout();
         gridLayout.setRows(calendar.getActiveYearsSize());
-        for (int i = currentActiveYearsSize; i < calendar.getActiveYearsSize(); ++i) {
+        for (int i = prevActiveYearsSize; i < calendar.getActiveYearsSize(); ++i) {
             final ActiveYear activeYear = calendar.getActiveYearBy(i);
             JButton yearButton = new JButton();
-
             yearButton.setFont(TEXT_FONT);
             String text = "<html><body><p style=\"text-align:center\">" + activeYear.number +
-                "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
-                activeYear.getActiveMonthsSize() + "/" + Date.MONTHS_IN_YEAR +
-                "</font></p></body></html>";
+                          "<br><font size=\"2\" color=\"" + SUBTEXT_COLOR + "\">" +
+                          activeYear.getActiveMonthsSize() + "/" + MONTHS_IN_YEAR +
+                          "</font></p></body></html>";
             yearButton.setText(text);
-
             yearButton.setBackground(AWTColors.getBy(activeYear.getColor()));
             yearButton.addActionListener(new YearButtonListener(activeYear, tasks));
             yearButtons.add(yearButton);
