@@ -8,16 +8,15 @@ import com.github.druyaned.active_recorder.active.*;
 import java.time.Month;
 
 public class CalendarPanel extends JPanel {
+    
     public static final int W = AppFrame.W;
     public static final int H = AppFrame.H - ControlPanel.H;
     public static final int COLUMNS = DAYS_IN_WEEK;
     public static final int ROWS = MAX_DAY / COLUMNS + 2;
     public static final Color FILLER_COLOR = new Color(204, 204, 204);
-    
     public final String YEARS_PANEL_NAME = "Active Years";
     public final String MONTHS_PANEL_NAME = "Active Months";
     public final String DAYS_PANEL_NAME = "Active Days";
-    
     private static final Paint gradient;
     
     static {
@@ -35,7 +34,6 @@ public class CalendarPanel extends JPanel {
     private final MonthsPanel monthsPanel;
     private final DaysPanel daysPanel;
     private final JLabel dateDisplay;
-    
     private String currentCardPanelName;
     final CardLayout cardsLayout;
     final JPanel cardsPanel;
@@ -43,15 +41,12 @@ public class CalendarPanel extends JPanel {
     public CalendarPanel(ActiveCalendar calendar) {
         setPreferredSize(new Dimension(W, H));
         this.calendar = calendar;
-
         cardsLayout = new CardLayout();
         cardsPanel = new JPanel(cardsLayout); // years, months, days
         cardsPanel.setOpaque(false);
-
         // days pane
         DayButtonTasks dayButtonTasks = new DayButtonTasks();
         daysPanel = new DaysPanel(calendar, dayButtonTasks);
-        
         // months pane
         MonthButtonTasks monthButtonTasks = new MonthButtonTasks(daysPanel,
             () -> setCurrentCardPanelName(DAYS_PANEL_NAME),
@@ -59,7 +54,6 @@ public class CalendarPanel extends JPanel {
             () -> cardsLayout.show(cardsPanel, DAYS_PANEL_NAME)
         );
         monthsPanel = new MonthsPanel(calendar, monthButtonTasks);
-
         // years pane
         YearButtonTasks yearButtonTasks = new YearButtonTasks(monthsPanel,
             () -> setCurrentCardPanelName(MONTHS_PANEL_NAME),
@@ -67,12 +61,10 @@ public class CalendarPanel extends JPanel {
             () -> cardsLayout.show(cardsPanel, MONTHS_PANEL_NAME)
         );
         yearsPanel = new YearsPanel(calendar, yearButtonTasks);
-
         // add created panes to the cards pane
         cardsPanel.add(yearsPanel, YEARS_PANEL_NAME);
         cardsPanel.add(monthsPanel, MONTHS_PANEL_NAME);
         cardsPanel.add(daysPanel, DAYS_PANEL_NAME);
-
         // back-button
         final JButton backButton = new JButton("<");
         backButton.addActionListener((e) -> {
@@ -86,7 +78,6 @@ public class CalendarPanel extends JPanel {
                 cardsLayout.show(cardsPanel, YEARS_PANEL_NAME);
             }
         });
-
         // date display
         dateDisplay = new JLabel();
         dateDisplay.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 32));
@@ -97,32 +88,38 @@ public class CalendarPanel extends JPanel {
         currentCardPanelName = DAYS_PANEL_NAME;
         setDateDisplayForDaysPanel();
         cardsLayout.show(cardsPanel, DAYS_PANEL_NAME);
-        
         // manage panel
         JPanel managePanel = new JPanel(new BorderLayout());
         managePanel.setOpaque(false);
         managePanel.add(backButton, BorderLayout.WEST);
         managePanel.add(dateDisplay, BorderLayout.CENTER);
-
         // add manage and cards pane
         setLayout(new BorderLayout());
         add(managePanel, BorderLayout.NORTH);
         add(cardsPanel, BorderLayout.CENTER);
     }
 
-    public void setDayFrameInvisible() { daysPanel.setDayFrameInvisible(); }
+    public void setDayFrameInvisible() {
+        daysPanel.setDayFrameInvisible();
+    }
 
-    public void dayFrameDispose() { daysPanel.dayFrameDispose(); }
+    public void dayFrameDispose() {
+        daysPanel.dayFrameDispose();
+    }
 
 //-Private-methods----------------------------------------------------------------------------------
 
-    private String getCurrentCardPanelName() { return currentCardPanelName; }
+    private String getCurrentCardPanelName() {
+        return currentCardPanelName;
+    }
 
     private void setCurrentCardPanelName(String cardPanelName) {
         currentCardPanelName = cardPanelName;
     }
 
-    private void setDateDisplayForYearsPanel() { dateDisplay.setText("Active years"); }
+    private void setDateDisplayForYearsPanel() {
+        dateDisplay.setText("Active years");
+    }
 
     private void setDateDisplayForMonthsPanel() {
         dateDisplay.setText(Integer.toString(monthsPanel.getCurrentYear()));
@@ -155,4 +152,5 @@ public class CalendarPanel extends JPanel {
         g2.setPaint(gradient);
         g2.fillRect(0, 0, getWidth(), getHeight());
     }
+    
 }

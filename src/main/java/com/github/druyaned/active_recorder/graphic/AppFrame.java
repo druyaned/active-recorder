@@ -11,12 +11,12 @@ import javax.swing.*;
 import javax.xml.transform.TransformerException;
 
 public class AppFrame extends JFrame {
+    
     public static final int W = 500;
     public static final int H = 600;
     public static final int X = 100;
     public static final int Y = 100;
     public static final int DELAY = 8;
-    
     private final CalendarPanel calendarPanel;
     private ControlPanel controlPanel;
     
@@ -27,11 +27,9 @@ public class AppFrame extends JFrame {
         setLocation(X, Y);
         setPreferredSize(new Dimension(W, H));
         Exiter exiter = new Exiter();
-
         // setting up the content pane
         JPanel appPane = new JPanel();
         setContentPane(appPane);
-
         // adding the control and calendar panes
         appPane.setLayout(new BorderLayout());
         calendarPanel = new CalendarPanel(calendar);
@@ -44,7 +42,6 @@ public class AppFrame extends JFrame {
         appPane.add(controlPanel, BorderLayout.NORTH);
         appPane.add(calendarPanel, BorderLayout.CENTER);
         pack();
-
         // on exit tasks
         exiter.add(() -> {
             try {
@@ -77,7 +74,6 @@ public class AppFrame extends JFrame {
             }
             calendarPanel.dayFrameDispose();
         });
-
         // save and exit on close
         addWindowListener(new WindowAdapter() {
             @Override
@@ -85,10 +81,8 @@ public class AppFrame extends JFrame {
                 exiter.runAllAndTryToExit();
             }
         });
-
         // add close actions
         CloseActionsAdder.add(appPane, () -> exiter.runAllAndTryToExit());
-
         // set quit handler
         QuitHandlerSetter.set(exiter);
     }
@@ -98,4 +92,5 @@ public class AppFrame extends JFrame {
         e.printStackTrace();
         exiter.unsetExit();
     }
+    
 }

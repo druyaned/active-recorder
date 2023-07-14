@@ -4,17 +4,15 @@ import static com.github.druyaned.active_recorder.active.ActiveMode.*;
 
 /** Provides a color of an activity to evaluate. The class is <i>immutable</i>. */
 public class ActiveColor implements Comparable<ActiveColor> {
+    
     public static final int MIN_COLOR = 63;
     public static final int MAX_COLOR = 255;
-
     public static final int MIN_VALUE = MIN_COLOR - MAX_COLOR; // -192
     public static final int MAX_VALUE = -MIN_VALUE; // 192
     public static final int AMOUNT = MAX_VALUE - MIN_VALUE + 1; // 385
-
     public static final ActiveColor DEVELOPMENT_COLOR;
     public static final ActiveColor STAGNATION_COLOR;
     public static final ActiveColor RELAXATION_COLOR;
-
     private static final ActiveColor[] colors = new ActiveColor[AMOUNT];
 
     static {
@@ -34,16 +32,12 @@ public class ActiveColor implements Comparable<ActiveColor> {
     }
 
     public static ActiveColor getBy(ActiveMode mode) {
-        if (mode == DEVELOPMENT) { // the greenest
-            return colors[AMOUNT - 1]; // ind=384
-        }
-        if (mode == STAGNATION) { // white
-            return colors[AMOUNT / 2]; // ind=192
-        }
-        if (mode == RELAXATION) {
-            return colors[0]; // the reddest
-        }
-        return null;
+        return switch (mode) {
+            case DEVELOPMENT -> colors[AMOUNT - 1]; // the greenest, ind=384
+            case STAGNATION -> colors[AMOUNT / 2]; // white, ind=192
+            case RELAXATION -> colors[0]; // the reddest
+            default -> null;
+        };
     }
 
 //-Non-static---------------------------------------------------------------------------------------
